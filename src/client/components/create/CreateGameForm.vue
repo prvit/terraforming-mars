@@ -452,6 +452,7 @@ import {RandomMAOptionType} from '@/common/ma/RandomMAOptionType';
 import {GameId} from '@/common/Types';
 import {AgendaStyle} from '@/common/turmoil/Types';
 import PreferencesIcon from '@/client/components/PreferencesIcon.vue';
+import {$t} from '@/client/directives/i18n';
 
 import * as constants from '@/common/constants';
 
@@ -659,6 +660,12 @@ export default (Vue as WithRefs<Refs>).extend({
         const readerResults = reader.result;
         if (typeof(readerResults) === 'string') {
           const results = JSON.parse(readerResults);
+
+          const source = results['source'];
+          if(source !== window.location.origin) {
+            alert($t('Source of uploaded settings is different, there might be some inconsistencies'));
+          }
+
           const players = results['players'];
           component.playersCount = players.length;
           component.showCorporationList = results['customCorporationsList'].length > 0;
@@ -939,6 +946,7 @@ export default (Vue as WithRefs<Refs>).extend({
       }
 
       const dataToSend = JSON.stringify({
+        source: window.location.origin,
         players,
         corporateEra,
         prelude,
